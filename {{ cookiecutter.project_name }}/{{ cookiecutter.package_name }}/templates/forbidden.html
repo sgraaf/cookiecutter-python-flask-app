@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ super() }}
+<h1>403 Forbidden</h1>
+<p>
+  You don't have the necessary permissions to access this page.
+  Go back to the <a href="{{ url_for('public.index') }}">Index</a>.
+</p>
+{% endblock %}

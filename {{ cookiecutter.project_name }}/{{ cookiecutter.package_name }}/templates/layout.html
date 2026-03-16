@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    {% block title -%}
+    <title>{{ project.title }}</title>
+    {%- endblock %}
+
+    {% block favicon -%}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />
+    {%- endblock favicon %}
+
+    {% block css -%}
+    <!-- Pico CSS v2.1.1 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='pico.min.css') }}">
+
+    <style>
+      #theme-toggle {
+        border: none;
+        padding: 0 0.5em;
+        color: var(--pico-color);
+        opacity: 1;
+        transition: opacity 0.2s;
+        vertical-align: middle;
+      }
+      #theme-toggle:hover {
+        opacity: 0.8;
+      }
+      #theme-toggle svg {
+        width: auto;
+        height: 1.125rem;
+        fill: currentColor;
+      }
+    </style>
+    {%- endblock %}
+
+    <script>
+      (function() { // Apply theme immediately to prevent flash
+        const theme = localStorage.getItem('theme');
+        if (theme === 'light' || theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', theme);
+        }
+      })();
+    </script>
+
+    {% block head -%}
+    {%- endblock %}
+  </head>
+  <body>
+    {% block header -%}
+    <header>
+      <div class="container">
+        {% block nav -%}
+        <nav>
+          {% include "_nav.html" %}
+        </nav>
+        {%- endblock %}
+      </div>
+    </header>
+    {%- endblock %}
+
+    {% block main -%}
+    <main>
+      <div class="container">
+        {% block content -%}
+        {% with messages = get_flashed_messages(with_categories=true) -%}
+        {% if messages -%}
+        <div style="margin-bottom: var(--pico-block-spacing-vertical);">
+            {% for category, message in messages -%}
+            <div role="alert">
+                {{ message }}
+            </div>
+            {%- endfor %}
+        </div>
+        {%- endif %}
+        {%- endwith %}
+        {%- endblock %}
+      </div>
+    </main>
+    {%- endblock %}
+
+    {% block footer -%}
+    <footer>
+      <div class="container">
+      </div>
+    </footer>
+    {%- endblock %}
+
+    {% block scripts %}
+    <script>
+      // Theme toggle functionality
+      (function() {
+        const toggle = document.getElementById('theme-toggle');
+        const iconAuto = document.getElementById('icon-auto');
+        const iconLight = document.getElementById('icon-light');
+        const iconDark = document.getElementById('icon-dark');
+
+        // Theme states: 'auto' (default), 'light', 'dark'
+        function getTheme() {
+          return localStorage.getItem('theme') || 'auto';
+        }
+
+        function setTheme(theme) {
+          if (theme === 'auto') {
+            localStorage.removeItem('theme');
+            document.documentElement.removeAttribute('data-theme');
+          } else {
+            localStorage.setItem('theme', theme);
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+          updateIcon(theme);
+        }
+
+        function updateIcon(theme) {
+          iconAuto.style.display = theme === 'auto' ? 'block' : 'none';
+          iconLight.style.display = theme === 'light' ? 'block' : 'none';
+          iconDark.style.display = theme === 'dark' ? 'block' : 'none';
+
+          // Update aria-label for accessibility
+          const labels = {
+            'auto': 'Theme: Auto (system preference). Click to switch to light.',
+            'light': 'Theme: Light. Click to switch to dark.',
+            'dark': 'Theme: Dark. Click to switch to auto.'
+          };
+          toggle.setAttribute('aria-label', labels[theme]);
+        }
+
+        // Cycle through themes: auto -> light -> dark -> auto
+        function cycleTheme() {
+          const current = getTheme();
+          const next = current === 'auto' ? 'light' : current === 'light' ? 'dark' : 'auto';
+          setTheme(next);
+        }
+
+        // Initialize
+        updateIcon(getTheme());
+        toggle.addEventListener('click', cycleTheme);
+      })();
+    </script>
+    {% endblock %}
+  </body>
+</html>

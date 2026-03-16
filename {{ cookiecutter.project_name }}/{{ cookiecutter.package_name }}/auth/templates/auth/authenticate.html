@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% from "auth/_forms.html" import render_field %}
+{% block title %}
+<title>Authentication</title>
+{% endblock %}
+{% block content %}
+{{ super() }}
+<h1>Authentication</h1>
+<form method="post">
+  {{ form.hidden_tag() }}
+
+  {% if is_totp -%}
+  {{ render_field(form.token) }}
+  {% else -%}
+  {{ render_field(form.password) }}
+  {%- endif %}
+  {{ form.submit() }}
+</form>
+{% endblock %}

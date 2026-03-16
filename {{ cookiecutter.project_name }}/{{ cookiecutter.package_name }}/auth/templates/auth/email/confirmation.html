@@ -1,0 +1,21 @@
+<p>
+    Hi {{ user.username }}!
+    <br />
+    <br />
+    You can confirm your email address by clicking the link below:
+    <br />
+    Click <a href="{{ url_for('auth.confirmation', token=token, _external=True) }}">here</a> to confirm your email address.
+    <br />
+    <br />
+    Alternatively, you can paste the following link in your browser's address bar:
+    <br />
+    {{ url_for('auth.confirmation', token=token, _external=True) }}
+    <br />
+    <br />
+    Thank you for signing up!
+    <br />
+    <br />
+    Regards,
+    <br />
+    {{ project.title }}
+</p>

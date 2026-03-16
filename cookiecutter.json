@@ -1,0 +1,83 @@
+{
+    "friendly_name": "Python Flask App",
+    "project_name": "{{ cookiecutter.friendly_name | slugify }}",
+    "package_name": "{{ cookiecutter.project_name.replace('-', '_').lower() }}",
+    "short_description": "{{ cookiecutter.friendly_name }} is a Python package for ...",
+    "author": "",
+    "email": "",
+    "github_username": "",
+    "version": "{% now 'utc', '%Y' %}.1.0",
+    "copyright_year": "{% now 'utc', '%Y' %}",
+    "license": [
+        "agpl-3.0",
+        "gpl-3.0",
+        "lgpl-3.0",
+        "mpl-2.0",
+        "apache-2.0",
+        "mit",
+        "unlicense",
+        "bsd-3-clause",
+        "gpl-2.0"
+    ],
+    "development_status": [
+        "Development Status :: 1 - Planning",
+        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 6 - Mature",
+        "Development Status :: 7 - Inactive"
+    ],
+    "min_python_version": [
+        "3.11",
+        "3.12",
+        "3.13",
+        "3.14"
+    ],
+    "init_git": [true, false],
+    "_copy_without_render": [
+        "*.html",
+        "*.txt"
+    ],
+    "__prompts__": {
+        "friendly_name": "The friendly name of your project (for use in documentation, etc.)",
+        "project_name": "The name (slug) of your project",
+        "package_name": "The name of your package",
+        "short_description": "A short description of your project",
+        "author": "Your (full) name",
+        "email": "Your email address",
+        "github_username": "Your GitHub username or organization",
+        "version": "The version of your package",
+        "copyright_year": "The copyright year of your package",
+        "license": {
+            "__prompt__": "Choose a license for your package",
+            "agpl-3.0": "GNU Affero General Public License v3.0",
+            "gpl-3.0": "GNU General Public License v3.0",
+            "lgpl-3.0": "GNU Lesser General Public License v3.0",
+            "mpl-2.0": "Mozilla Public License 2.0",
+            "apache-2.0": "Apache license 2.0",
+            "mit": "MIT",
+            "unlicense": "The Unlicense",
+            "bsd-3-clause": "BSD 3-clause \"New\" or \"Revised\" license",
+            "gpl-2.0": "GNU General Public License v2.0"
+        },
+        "development_status": {
+            "__prompt__": "Choose a development status for your package",
+            "Development Status :: 1 - Planning": "Planning",
+            "Development Status :: 2 - Pre-Alpha": "Pre-Alpha",
+            "Development Status :: 3 - Alpha": "Alpha",
+            "Development Status :: 4 - Beta": "Beta",
+            "Development Status :: 5 - Production/Stable": "Production/Stable",
+            "Development Status :: 6 - Mature": "Mature",
+            "Development Status :: 7 - Inactive": "Inactive"
+        },
+        "min_python_version": {
+            "__prompt__": "Choose the minimum Python version for your package",
+            "3.11": "Python 3.11",
+            "3.12": "Python 3.12",
+            "3.13": "Python 3.13",
+            "3.14": "Python 3.14"
+        },
+        "init_git": "Initialize a Git repository"
+    }
+}

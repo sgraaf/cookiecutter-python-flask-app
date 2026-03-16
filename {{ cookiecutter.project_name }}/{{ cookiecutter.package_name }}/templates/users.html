@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %}
+<title>Our users</title>
+{% endblock %}
+{% block content %}
+{{ super() }}
+<h1>Index of all users</h1>
+<ul>
+  {% for user in users -%}
+  <li><a href="{{ url_for('public.user', name=user.username) }}">{{ user.username }} (#{{ user.id }})</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

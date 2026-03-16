@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% from "auth/_forms.html" import render_field %}
+{% block title %}
+<title>Login</title>
+{% endblock %}
+{% block content %}
+{{ super() }}
+<h1>Login</h1>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <fieldset>
+    {{ render_field(form.email_address) }}
+
+    {{ render_field(form.password) }}
+
+    {{ form.remember_me.label() }}
+    {{ form.remember_me(role="switch") }}
+  </fieldset>
+  {{ form.submit() }}
+  <a href="{{ url_for('auth.password_reset_request') }}">Forgot your password?</a>
+</form>
+{% endblock %}

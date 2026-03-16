@@ -1,0 +1,7 @@
+{% macro render_field(field) %}
+{{ field.label() }}
+{{ field(**({"aria-invalid": "true"} if field.errors else {})) }}
+{% for error in field.errors %}
+<small>{{ error }}</small>
+{% endfor %}
+{% endmacro %}

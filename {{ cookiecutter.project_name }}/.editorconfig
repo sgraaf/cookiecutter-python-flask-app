@@ -1,0 +1,29 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Don't trim trailing whitespace for Markdown
+[*.md]
+trim_trailing_whitespace = false
+
+# YAML files use 2 spaces for indentation
+[*.{yml,yaml}]
+indent_size = 2
+
+# HTML files use 2 spaces for indentation
+[*.html]
+indent_size = 2
+
+# CSS files use 2 spaces for indentation
+[*.{css,scss}]
+indent_size = 2
+
+# Makefiles use tabs for indentation
+[Makefile]
+indent_style = tab

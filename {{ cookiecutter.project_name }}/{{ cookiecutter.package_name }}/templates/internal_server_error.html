@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ super() }}
+<h1>500 Internal Server Error</h1>
+<p>
+  We broke something. Sorry about that.
+  Go back to the <a href="{{ url_for('public.index') }}">Index</a>.
+</p>
+{% endblock %}

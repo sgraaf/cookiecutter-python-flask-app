@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% from "auth/_forms.html" import render_field %}
+{% block title %}
+<title>Two-Factor Authentication Setup</title>
+{% endblock %}
+{% block content %}
+{{ super() }}
+<h1>Two-Factor Authentication Setup</h1>
+<div class="container">
+  <p>Scan the image below with the two-factor authentication (2FA) app of your choice:</p>
+  <img src="{{ user.otpauth_uri | qrcode_data_uri }}">
+  <p>Alternatively, you can enter the following code manually:</p>
+  <code>{{ user.otp_secret }}</code>
+</div>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <p>After scanning the QR code, your 2FA app will display a six-digit code. Enter this code below:</p>
+  {{ render_field(form.token) }}
+
+  {{ form.submit() }}
+</form>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% from "auth/_forms.html" import render_field %}
+{% block title %}
+<title>Two-Factor Authentication</title>
+{% endblock %}
+{% block content %}
+{{ super() }}
+<h1>Two-Factor Authentication</h1>
+<form method="post">
+  {{ form.hidden_tag() }}
+
+  {{ render_field(form.token) }}
+
+  {{ form.submit() }}
+</form>
+{% endblock %}

@@ -1,0 +1,129 @@
+[build-system]
+requires = ["uv_build>=0.10.8,<0.11.0"]
+build-backend = "uv_build"
+
+[project]
+name = "{{ cookiecutter.project_name }}"
+version = "{{ cookiecutter.version }}"
+description = "{{ cookiecutter.short_description }}"
+authors = [{name = "{{ cookiecutter.author }}", email = "{{ cookiecutter.email }}"}]
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = [
+    "flask",
+    "sqlalchemy",
+    "webapp",
+]
+classifiers = [
+    "{{ cookiecutter.development_status }}",
+    {% if cookiecutter.license == 'agpl-3.0' -%}
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    {% elif cookiecutter.license == 'gpl-3.0' -%}
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    {% elif cookiecutter.license == 'lgpl-3.0' -%}
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    {% elif cookiecutter.license == 'mpl-2.0' -%}
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    {% elif cookiecutter.license == 'apache-2.0' -%}
+    "License :: OSI Approved :: Apache Software License",
+    {% elif cookiecutter.license == 'mit' -%}
+    "License :: OSI Approved :: MIT License",
+    {% elif cookiecutter.license == 'unlicense' -%}
+    "License :: OSI Approved :: The Unlicense (Unlicense)",
+    {% elif cookiecutter.license == 'bsd-3-clause' -%}
+    "License :: OSI Approved :: BSD License",
+    {% elif cookiecutter.license == 'gpl-2.0' -%}
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+    {% endif -%}
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    {% for minor in range(cookiecutter.min_python_version.split('.')[1] | int, 15) -%}
+    "Programming Language :: Python :: 3.{{ minor }}",
+    {% endfor -%}
+    "Typing :: Typed",
+]
+requires-python = ">={{ cookiecutter.min_python_version }}, <4"
+dependencies = [
+    "email_validator",
+    "flask",
+    "flask-alembic",
+    "flask-login",
+    "flask-mail",
+    "flask-sqlalchemy-lite",
+    "flask-wtf",
+    "inflect",
+    "pyjwt",
+    "pyotp",
+    "qrcode",
+    "werkzeug",
+]
+
+[dependency-groups]
+tests = [
+    "pytest",
+    "pytest-cov",
+]
+typing = [
+    "mypy",
+    "pyrefly",
+    "ty",
+]
+dev = [
+    { include-group = "tests" },
+    { include-group = "typing" },
+    "prek",
+]
+
+[project.urls]
+Changelog = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_name }}/blob/main/CHANGELOG.md"
+"Source Code" = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_name }}"
+"Issue Tracker" = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_name }}/issues"
+
+[tool.uv.build-backend]
+module-name = "{{ cookiecutter.package_name }}"
+module-root = ""
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812",  # missing-trailing-comma (flake8-commas), handled by the formatter
+    "D102",  # undocumented-public-method (pydocstyle)
+    "D105",  # undocumented-magic-method (pydocstyle)
+    "D107",  # undocumented-public-init (pydocstyle)
+    "E501",  # line-too-long (pycodestyle), handled by the formatter
+    "PLC2401",  # non-ascii-name (Pylint)
+    "S101",   # assert (flake8-bandit)
+    "SLF001",  # private-member-access (flake8-self)
+]
+pydocstyle.convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [
+    "F401",  # unused-import (Pyflakes)
+]
+"tests/conftest.py" = [
+    "ARG001",  # unused-function-argument (flake8-unused-arguments)
+    "D",  # pydocstyle
+    "PLC0415",  # import-outside-top-level (Pylint)
+    "S106",  # possible-hardcoded-password-assigned (flake8-bandit)
+]
+"tests/**/test_*.py" = [
+    "ARG002",  # unused-method-argument (flake8-unused-arguments)
+    "D",  # pydocstyle
+    "PLC0415",  # import-outside-top-level (Pylint)
+    "PLR2004",  # magic-value-comparison (Pylint)
+    "S101",  # assert (flake8-bandit)
+    "S105",  # possible-hardcoded-password-assigned (flake8-bandit)
+    "S106",  # possible-hardcoded-password-assigned (flake8-bandit)
+    "SIM300",  # yoda-conditions (flake8-simplify)
+]
+
+[tool.mypy]
+python_version = "{{ cookiecutter.min_python_version }}"
+
+[tool.pytest]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow running tests",
+]

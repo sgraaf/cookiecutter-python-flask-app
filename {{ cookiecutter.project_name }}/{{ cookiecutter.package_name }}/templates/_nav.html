@@ -1,0 +1,24 @@
+<ul>
+  <li><strong>{{ project.title }}</strong></li>
+</ul>
+<ul>
+  <li><a href="{{ url_for('public.index') }}">Index</a></li>
+  <li><a href="{{ url_for('public.users') }}">Users</a></li>
+  {% if current_user.is_authenticated %}
+  <li><a href="{{ url_for('public.user', name=current_user.username) }}">{{ current_user.username }}</a></li>
+  <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+  {% else %}
+  <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+  <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+  {% endif %}
+  <li>
+    <button id="theme-toggle" type="button" class="outline secondary" aria-label="Toggle theme">
+      <!-- Auto/System icon (default) -->
+      <svg id="icon-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2V4a8 8 0 1 0 0 16z"/></svg>
+      <!-- Light icon -->
+      <svg id="icon-light" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none;"><path d="M12 20a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1M4.929 17.657a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-1.414-1.414zM17.657 17.657a1 1 0 0 1 1.414 0l1.414 1.414a1 1 0 0 1-1.414 1.414l-1.414-1.414a1 1 0 0 1 0-1.414M12 6a6 6 0 1 1 0 12 6 6 0 0 1 0-12M3 11a1 1 0 1 1 0 2H1a1 1 0 1 1 0-2zM23 11a1 1 0 1 1 0 2h-2a1 1 0 1 1 0-2zM3.515 3.515a1 1 0 0 1 1.414 0l1.414 1.414a1 1 0 1 1-1.414 1.414L3.515 4.929a1 1 0 0 1 0-1.414M19.071 3.515a1 1 0 0 1 1.414 1.414l-1.414 1.414a1 1 0 1 1-1.414-1.414zM12 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V1a1 1 0 0 1 1-1"/></svg>
+      <!-- Dark icon -->
+      <svg id="icon-dark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none;"><path d="M9.272 2.406a1 1 0 0 0-1.23-1.355C6.59 1.535 5.432 2.488 4.37 3.55a11.4 11.4 0 0 0 0 16.182c4.518 4.519 11.51 4.261 15.976-.205 1.062-1.062 2.014-2.22 2.498-3.673A1 1 0 0 0 21.55 14.6c-3.59 1.322-7.675.734-10.433-2.025C8.35 9.808 7.788 5.744 9.272 2.406"/></svg>
+    </button>
+  </li>
+</ul>
