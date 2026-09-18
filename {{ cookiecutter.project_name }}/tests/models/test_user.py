@@ -81,7 +81,7 @@ class TestUserTOTP:
         next_counter = int(time.time()) // user.totp.interval + 1
         next_time = next_counter * user.totp.interval
         next_token = user.totp.at(next_time)
-        with patch("cookiecutter_python_flask_app_demo.models.user.time") as mock_time:
+        with patch("{{ cookiecutter.package_name }}.models.user.time") as mock_time:
             mock_time.time.return_value = float(next_time)
             assert user.verify_totp(next_token) is True
 

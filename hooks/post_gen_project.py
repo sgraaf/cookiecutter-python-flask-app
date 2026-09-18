@@ -51,7 +51,7 @@ def initialize_git_repository() -> None:
             "git",
             "commit",
             "-m",
-            "Initial commit from `cookiecutter-python-flask-app`",
+            "Initial commit from `cookiecutter-python-web-app`",
         ],
     )
 

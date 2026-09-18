@@ -1,7 +1,7 @@
-cookiecutter-python-flask-app-demo
+cookiecutter-python-web-app-demo
 
 
-Demo of https://github.com/sgraaf/cookiecutter-python-flask-app.
+Demo of https://github.com/sgraaf/cookiecutter-python-web-app.
 Steven van de Graaf
 steven@vandegraaf.xyz
 sgraaf

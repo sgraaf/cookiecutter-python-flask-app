@@ -6,9 +6,9 @@ on:
       - main
 
 env:
-  TEMPLATE: cookiecutter-python-flask-app
-  CURRENT_DEMO: cookiecutter-python-flask-app-demo-current
-  DEMO: cookiecutter-python-flask-app-demo
+  TEMPLATE: cookiecutter-python-web-app
+  CURRENT_DEMO: cookiecutter-python-web-app-demo-current
+  DEMO: cookiecutter-python-web-app-demo
 
 jobs:
   update_demo:
