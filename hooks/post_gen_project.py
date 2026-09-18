@@ -33,8 +33,8 @@ def initialize_git_repository() -> None:
     run(["git", "init", "-b", "main"])
 
     # update and install pre-commit hooks
-    run(["uv", "run", "prek", "auto-update"])
-    run(["uv", "run", "prek", "install", "--install-hooks"])
+    run(["uv", "run", "prek", "update"])
+    run(["uv", "run", "prek", "install", "--prepare-hooks"])
 
     # add files
     run(["git", "add", "."])
