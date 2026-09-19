@@ -34,7 +34,7 @@ def send_email(
     Thread(
         target=send_async_email,
         args=(
-            current_app._get_current_object(),  # type: ignore[attr-defined]
+            current_app._get_current_object(),  # ty: ignore[unresolved-attribute]
             Message(
                 subject, recipients=recipients, body=text_body, html=html_body, **kwargs
             ),

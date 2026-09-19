@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from unittest.mock import patch
 
 import pyotp
@@ -253,4 +253,4 @@ class TestUserPasswordEdgeCases:
     ) -> None:
         """Verifying None should raise AttributeError from werkzeug."""
         with pytest.raises(AttributeError):
-            user.verify_password(None)  # type: ignore[arg-type]
+            user.verify_password(cast("str", None))

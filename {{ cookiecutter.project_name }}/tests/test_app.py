@@ -1,6 +1,5 @@
 """Tests for app factory, error handlers, before-request hooks, and template filters."""
 
-import datetime as dt
 from typing import TYPE_CHECKING, Any, cast
 
 import pytest
@@ -113,29 +112,6 @@ class TestBeforeRequestHandler:
 @pytest.mark.unit
 class TestTemplateFilters:
     """Tests for custom Jinja2 template filters."""
-
-    def test_strftime_filter_registered(self, app: Flask) -> None:
-        """Test that the strftime filter is registered."""
-        assert "strftime" in app.jinja_env.filters
-
-    def test_strftime_filter_formats_datetime(self, app: Flask) -> None:
-        """Test that the strftime filter correctly formats a datetime."""
-        strftime_filter = cast("Callable[..., str]", app.jinja_env.filters["strftime"])
-        test_dt = dt.datetime(2025, 1, 15, 10, 30, 0, tzinfo=dt.UTC)
-
-        result = strftime_filter(test_dt, "%Y-%m-%d")
-
-        assert result == "2025-01-15"
-
-    def test_strftime_filter_default_format(self, app: Flask) -> None:
-        """Test that the strftime filter uses the default format."""
-        strftime_filter = cast("Callable[..., str]", app.jinja_env.filters["strftime"])
-        test_dt = dt.datetime(2025, 1, 15, 10, 30, 0, tzinfo=dt.UTC)
-
-        result = strftime_filter(test_dt)
-
-        assert "2025-01-15" in result
-        assert "10:30:00" in result
 
     def test_qrcode_data_uri_filter_registered(self, app: Flask) -> None:
         """Test that the qrcode_data_uri filter is registered."""

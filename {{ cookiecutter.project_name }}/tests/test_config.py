@@ -21,7 +21,9 @@ class TestConfig:
         assert Config.TESTING is False
 
     def test_sqlalchemy_engines_default(self) -> None:
-        assert Config.SQLALCHEMY_ENGINES == {"default": "sqlite:///default.sqlite"}
+        assert Config.SQLALCHEMY_ENGINES == {
+            "default": "sqlite:///{{ cookiecutter.package_name }}.sqlite3"
+        }
 
 
 @pytest.mark.unit
@@ -48,7 +50,7 @@ class TestTestingConfig:
         assert TestingConfig.DEBUG is False
 
     def test_uses_in_memory_database(self) -> None:
-        assert TestingConfig.SQLALCHEMY_ENGINES == {"default": "sqlite://"}
+        assert TestingConfig.SQLALCHEMY_ENGINES == {"default": "sqlite:///:memory:"}
 
 
 @pytest.mark.unit
@@ -79,7 +81,7 @@ class TestCreateAppWithConfig:
 
     def test_testing_config_uses_in_memory_db(self) -> None:
         app = create_app(TestingConfig)
-        assert app.config["SQLALCHEMY_ENGINES"] == {"default": "sqlite://"}
+        assert app.config["SQLALCHEMY_ENGINES"] == {"default": "sqlite:///:memory:"}
 
     def test_app_is_flask_instance(self) -> None:
         app = create_app(TestingConfig)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 
@@ -11,8 +11,6 @@ from {{ cookiecutter.package_name }}.models import User
 from {{ cookiecutter.package_name }}.models.mixins import Page, QueryMixin
 
 if TYPE_CHECKING:
-    from typing import Any
-
     from flask import Flask
     from flask_sqlalchemy_lite import SQLAlchemy
 
@@ -52,7 +50,7 @@ class TestPage:
     def test_frozen(self) -> None:
         page: Page[Any] = Page(items=[], page=1, per_page=10, total=0)
         with pytest.raises(AttributeError):
-            page.page = 2  # type: ignore[misc]
+            cast("Any", page).page = 2
 
 
 @pytest.mark.integration

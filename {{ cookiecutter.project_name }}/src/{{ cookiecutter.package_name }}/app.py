@@ -1,14 +1,13 @@
 """App creation and configuration for {{ cookiecutter.friendly_name }}."""
 
 import contextlib
-import datetime as dt
 from typing import Any
 
 from flask import Flask, render_template
 from flask_login import current_user
 from werkzeug import Response
 
-from .config import _DEFAULT_SECRET_KEY, Config, DevelopmentConfig
+from .config import DEFAULT_SECRET_KEY, Config, DevelopmentConfig
 from .extensions import db
 from .utils import utcnow
 
@@ -58,10 +57,10 @@ def configure_context_processors(app: Flask) -> None:
     def inject_project_config() -> dict[str, dict[str, str]]:
         """Inject project configuration variables into the context of templates."""
         return {
-            "project": {
-                k.removeprefix("PROJECT_").lower(): v
+            "app": {
+                k.removeprefix("APP_").lower(): v
                 for k, v in app.config.items()
-                if k.startswith("PROJECT_")
+                if k.startswith("APP_")
             }
         }
 
@@ -135,10 +134,6 @@ def configure_template_filters(app: Flask) -> None:
     """Configure custom template filters."""
     from .utils import generate_data_uri, generate_qrcode  # noqa: PLC0415
 
-    @app.template_filter("strftime")
-    def strftime_filter(dt: dt.datetime, format_: str = "%Y-%m-%d %H:%M:%S %Z") -> str:
-        return dt.strftime(format_)
-
     @app.template_filter("qrcode_data_uri")
     def generate_qrcode_data_uri(data: str | bytes) -> str:
         return generate_data_uri(
@@ -152,12 +147,12 @@ def create_app(config: type[Config] = DevelopmentConfig) -> Flask:
 
     # configure app
     app.config.from_object(config)
-    app.config.from_prefixed_env()
+    app.config.from_prefixed_env(prefix="{{ cookiecutter.package_name.upper() }}")
 
     # reject insecure `SECRET_KEY` in production
     if not app.debug and not app.testing:
         key = app.config.get("SECRET_KEY", "")
-        if not key or key == _DEFAULT_SECRET_KEY:
+        if not key or key == DEFAULT_SECRET_KEY:
             msg = "SECRET_KEY must be set to a secure value in production. Generate one with: `python -c 'import secrets; print(secrets.token_urlsafe())'`"
             raise ValueError(msg)
 

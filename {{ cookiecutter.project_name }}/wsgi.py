@@ -1,18 +1,11 @@
-"""WSGI entry point for the Flask application.
+"""WSGI entry point for the Flask web application."""
 
-Creates the application instance via the application factory function and
-registers a shell context processor that exposes SQLAlchemy's orm module as
-``so`` for convenience during interactive ``flask shell`` sessions.
-
-Typical usage::
-
-    flask run
-    gunicorn wsgi:app
-"""
-
+import sqlalchemy as sa
 import sqlalchemy.orm as so
 
 from {{ cookiecutter.package_name }}.app import create_app
+from {{ cookiecutter.package_name }}.extensions import db
+from {{ cookiecutter.package_name }}.models import User
 
 app = create_app()
 
@@ -28,4 +21,4 @@ def make_shell_context() -> dict[str, object]:
     Returns:
         A dict mapping names to objects injected into the shell namespace.
     """
-    return {"so": so}
+    return {"sa": sa, "so": so, "db": db, "User": User}

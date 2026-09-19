@@ -39,8 +39,8 @@ class User(TimestampMixin, UserMixin, Model):
         sa.DateTime(timezone=True)
     )
 
-    @hybrid_property  # pyrefly: ignore[bad-override]
-    def is_active(self) -> bool:  # type: ignore[override]
+    @hybrid_property
+    def is_active(self) -> bool:
         """A user is active iff their email address has been confirmed."""
         return self.confirmed_at is not None
 
@@ -48,7 +48,7 @@ class User(TimestampMixin, UserMixin, Model):
     @classmethod
     def _is_active_expression(cls) -> sa.ColumnElement[bool]:
         """SQL expression: confirmed_at IS NOT NULL."""
-        return cls.confirmed_at.isnot(None)  # type: ignore[return-value]
+        return cls.confirmed_at.isnot(None)
 
     @so.validates("email_address")
     def _normalize_email(self, _key: str, value: str) -> str:

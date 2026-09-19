@@ -16,6 +16,10 @@
 uv add {{ cookiecutter.project_name }}
 ```
 
+## Documentation
+
+Check out the [*{{ cookiecutter.friendly_name }}* documentation](https://{{ cookiecutter.project_name }}.readthedocs.io/en/stable/) for the [User's Guide](https://{{ cookiecutter.project_name }}.readthedocs.io/en/stable/usage.html) and [API Reference](https://{{ cookiecutter.project_name }}.readthedocs.io/en/stable/api.html).
+
 ## Configuration
 
 *{{ cookiecutter.friendly_name }}* is configured via environment variables. You can set them directly or prefix them with `FLASK_` to have Flask pick them up automatically (e.g. `FLASK_SECRET_KEY`).
@@ -49,36 +53,8 @@ The application will be available at <http://127.0.0.1:5000>.
 For production deployments, use [Gunicorn](https://gunicorn.org/):
 
 ```sh
-gunicorn wsgi:app
+uv run gunicorn wsgi:app
 ```
-
-### Features
-
-The application provides the following features out of the box:
-
-- **User registration** -- sign up with a username, email address, and password.
-- **Email confirmation** -- new users receive a confirmation email with a tokenized link to verify their email address.
-- **Login** -- authenticate with an email address and password, with an optional "remember me" feature.
-- **Two-factor authentication (2FA)** -- optional TOTP-based two-factor authentication. Users can set up 2FA by scanning a QR code with an authenticator app.
-- **Password reset** -- request a password reset email with a tokenized link to set a new password.
-- **User listing** -- browse registered users and view individual user profiles.
-
-### Routes
-
-| Route                          | Description                         |
-| ------------------------------ | ----------------------------------- |
-| `/`                            | Index page.                         |
-| `/users`                       | List all registered users.          |
-| `/users/<name>`                | View user profile.                  |
-| `/auth/register`               | Register a new account.             |
-| `/auth/login`                  | Log in.                             |
-| `/auth/logout`                 | Log out.                            |
-| `/auth/confirmation/<token>`   | Confirm email address.              |
-| `/auth/two-factor`             | Two-factor authentication prompt.   |
-| `/auth/two-factor/setup`       | Set up two-factor authentication.   |
-| `/auth/authenticate`           | Re-authenticate (password or TOTP). |
-| `/auth/password-reset`         | Request a password reset.           |
-| `/auth/password-reset/<token>` | Reset password.                     |
 
 ### Database migrations
 

@@ -7,4 +7,4 @@ You can confirm your email address by pasting the following link in your browser
 Thank you for signing up!
 
 Regards,
-{{ project.title }}
+{{ app.title }}

@@ -1,13 +1,15 @@
 """Test fixtures and configuration."""
 
+import sqlite3
 from collections.abc import Iterator
 
 import pytest
 import sqlalchemy as sa
-import sqlalchemy.event
 from flask import Flask
 from flask.testing import FlaskClient
 from flask_sqlalchemy_lite import SQLAlchemy
+from sqlalchemy import event
+from sqlalchemy.pool import ConnectionPoolEntry
 
 from {{ cookiecutter.package_name }}.app import create_app
 from {{ cookiecutter.package_name }}.config import TestingConfig
@@ -30,14 +32,14 @@ def app() -> Flask:
     with app.app_context():
         engine = db_obj.engine
 
-        @sa.event.listens_for(engine, "connect")
+        @event.listens_for(engine, "connect")
         def _set_sqlite_pragma(
-            dbapi_connection: sa.Any,
-            _connection_record: sa.Any,
+            dbapi_connection: sqlite3.Connection,
+            _connection_record: ConnectionPoolEntry,
         ) -> None:
             dbapi_connection.isolation_level = None
 
-        @sa.event.listens_for(engine, "begin")
+        @event.listens_for(engine, "begin")
         def _do_begin(conn: sa.Connection) -> None:
             conn.exec_driver_sql("BEGIN")
 

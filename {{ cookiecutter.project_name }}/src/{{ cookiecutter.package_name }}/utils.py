@@ -6,7 +6,7 @@ import re
 import unicodedata
 from base64 import b64encode
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 import inflect
 import qrcode
@@ -28,22 +28,20 @@ def utcnow() -> dt.datetime:
 
 
 def safe_redirect(default: str = "public.index") -> Response:
-    r"""Redirect to the ``next`` query parameter, falling back to *default*.
+    """Redirect to the validated `next` URL of the request.
 
-    Rejects off-site URLs to prevent open-redirect attacks.  A valid *next*
-    value must be a relative path starting with ``/`` and must not start with
-    ``//`` or ``/\`` (which some browsers interpret as protocol-relative or
-    host-relative URLs).
+    The `next` parameter is attacker-controllable, so it is resolved against this host
+    and only accepted when it stays on it. Both the accepted target and the `default`
+    fallback are absolute URLs, which a browser cannot reinterpret as pointing at
+    another host.
     """
     next_page = request.args.get("next")
-    if (
-        next_page is None
-        or not next_page.startswith("/")
-        or next_page.startswith(("//", "/\\"))
-        or urlparse(next_page).netloc != ""
-    ):
-        next_page = url_for(default)
-    return redirect(next_page)
+
+    if next_page:
+        target = urljoin(request.host_url, next_page)
+        if urlparse(target).netloc == urlparse(request.host_url).netloc:
+            return redirect(target)
+    return redirect(url_for(default, _external=True))
 
 
 def slugify(value: object, *, allow_unicode: bool = False) -> str:

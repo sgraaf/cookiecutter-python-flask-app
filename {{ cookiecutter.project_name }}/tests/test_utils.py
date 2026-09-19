@@ -3,8 +3,10 @@ from __future__ import annotations
 import datetime as dt
 from base64 import b64decode
 from typing import TYPE_CHECKING
+from urllib.parse import quote, urlparse
 
 import pytest
+from flask import url_for
 
 from {{ cookiecutter.package_name }}.utils import (
     camel_to_snake_case,
@@ -93,64 +95,116 @@ class TestUtcnow:
 
 @pytest.mark.unit
 class TestSafeRedirect:
-    """Tests for the safe_redirect helper."""
+    """Tests for the safe_redirect helper.
+
+    ``safe_redirect`` resolves the attacker-controllable ``next`` parameter against the
+    request host and emits an absolute URL, so an accepted redirect is asserted on its
+    *host* rather than by searching the URL for a substring: a hostile name is only
+    dangerous when it lands in the authority, not when it is part of the path. A
+    rejected ``next`` falls back to the default endpoint, also as an absolute URL.
+    """
 
     def test_redirects_to_next_param(self, app: Flask) -> None:
         with app.test_request_context("/?next=/dashboard"):
             response = safe_redirect()
             assert response.status_code == 302
-            assert response.location == "/dashboard"
+            assert response.location == "http://localhost/dashboard"
 
     def test_falls_back_to_default_when_no_next(self, app: Flask) -> None:
         with app.test_request_context("/"):
             response = safe_redirect()
             assert response.status_code == 302
-            # url_for("public.index") resolves to /
-            assert "/" in response.location
+            assert response.location == url_for("public.index", _external=True)
+
+    @pytest.mark.parametrize("query", ["/", "/?next=", "/?next=http://evil.com/steal"])
+    def test_fallback_is_absolute(self, app: Flask, query: str) -> None:
+        """No branch emits a relative Location, whether next is absent, empty or rejected."""
+        with app.test_request_context(query):
+            parsed = urlparse(safe_redirect().location)
+            assert parsed.scheme == "http"
+            assert parsed.netloc == "localhost"
+            assert parsed.path == "/index"
+
+    def test_falls_back_to_default_when_next_is_empty(self, app: Flask) -> None:
+        with app.test_request_context("/?next="):
+            response = safe_redirect()
+            assert response.status_code == 302
+            assert response.location == url_for("public.index", _external=True)
 
     def test_rejects_external_url(self, app: Flask) -> None:
         with app.test_request_context("/?next=http://evil.com/steal"):
             response = safe_redirect()
             assert response.status_code == 302
-            assert "evil.com" not in response.location
+            assert response.location == url_for("public.index", _external=True)
+
+    def test_rejects_external_url_with_scheme_upgrade(self, app: Flask) -> None:
+        with app.test_request_context("/?next=https://evil.com/steal"):
+            response = safe_redirect()
+            assert response.status_code == 302
+            assert response.location == url_for("public.index", _external=True)
 
     def test_rejects_protocol_relative_url(self, app: Flask) -> None:
         with app.test_request_context("/?next=//evil.com/steal"):
             response = safe_redirect()
             assert response.status_code == 302
-            assert "evil.com" not in response.location
+            assert response.location == url_for("public.index", _external=True)
+
+    @pytest.mark.parametrize("prefix", [" ", "\t", "\n", "\r"])
+    def test_rejects_whitespace_padded_protocol_relative_url(
+        self, app: Flask, prefix: str
+    ) -> None:
+        """Leading whitespace is stripped during URL parsing, so it cannot smuggle a host."""
+        with app.test_request_context(f"/?next={quote(prefix)}//evil.com/steal"):
+            response = safe_redirect()
+            assert response.status_code == 302
+            assert response.location == url_for("public.index", _external=True)
+
+    @pytest.mark.parametrize(
+        "next_page",
+        ["javascript:alert(1)", "data:text/html,<script>alert(1)</script>"],
+    )
+    def test_rejects_non_http_scheme(self, app: Flask, next_page: str) -> None:
+        """A scheme that carries no authority must not be handed to the browser."""
+        with app.test_request_context(f"/?next={quote(next_page, safe='')}"):
+            response = safe_redirect()
+            assert response.status_code == 302
+            assert response.location == url_for("public.index", _external=True)
 
     def test_custom_default(self, app: Flask) -> None:
         with app.test_request_context("/"):
             response = safe_redirect(default="auth.login")
             assert response.status_code == 302
-            assert "/auth/login" in response.location
+            assert response.location == url_for("auth.login", _external=True)
 
-    def test_rejects_backslash_url(self, app: Flask) -> None:
-        with app.test_request_context("/?next=\\evil.com"):
+    @pytest.mark.parametrize(
+        "next_page",
+        ["\\evil.com", "/\\evil.com", "\\\\evil.com", "/\\/evil.com", "///evil.com"],
+    )
+    def test_backslash_url_stays_on_this_host(self, app: Flask, next_page: str) -> None:
+        """Backslash tricks must not move the *host* of the redirect target.
+
+        ``/\\evil.com`` as a bare relative Location would be re-read by a browser as the
+        protocol-relative ``//evil.com``. Emitting an absolute URL pins the authority
+        before the backslash is reached, so ``evil.com`` can only survive as path data.
+        """
+        with app.test_request_context(f"/?next={quote(next_page, safe='')}"):
             response = safe_redirect()
             assert response.status_code == 302
-            assert "evil.com" not in response.location
-
-    def test_rejects_slash_backslash_url(self, app: Flask) -> None:
-        with app.test_request_context("/?next=/\\evil.com"):
-            response = safe_redirect()
-            assert response.status_code == 302
-            assert "evil.com" not in response.location
+            assert urlparse(response.location).netloc == "localhost"
 
     def test_next_with_query_string(self, app: Flask) -> None:
         """Test that query parameters in the next URL are preserved."""
         with app.test_request_context("/?next=/dashboard%3Ftab%3Dsettings"):
             response = safe_redirect()
             assert response.status_code == 302
-            assert response.location == "/dashboard?tab=settings"
+            assert response.location == "http://localhost/dashboard?tab=settings"
 
     def test_next_with_fragment(self, app: Flask) -> None:
         """Test that fragment identifiers in the next URL are preserved."""
         with app.test_request_context("/?next=/page%23section"):
             response = safe_redirect()
             assert response.status_code == 302
-            assert response.location == "/page#section"
+            assert response.location == "http://localhost/page#section"
 
 
 @pytest.mark.unit
